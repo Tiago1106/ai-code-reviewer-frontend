@@ -110,3 +110,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 - Result page (`/result/[id]`): replaced inline `ResultSkeleton` and `ResultError` with reusable `LoadingState` and `ErrorState` components
+
+### Added (tests)
+- Test infrastructure: Vitest 4.x with jsdom environment, `@testing-library/react`, `@testing-library/jest-dom`, `@vitejs/plugin-react`
+  - `vitest.config.ts` with globals, `@/` alias resolution, setup file, `clearMocks`/`restoreMocks`
+  - `src/__tests__/setup.ts` importing `@testing-library/jest-dom/vitest` matchers
+  - `test` and `test:watch` scripts in `package.json`
+- Unit tests for API client (`src/__tests__/lib/client.test.ts`): 7 tests covering GET/POST requests, HTTP errors, network failures, timeout/abort, unknown errors, `ApiError` class
+- Unit tests for review functions (`src/__tests__/lib/reviews.test.ts`): 2 tests covering `createReview` POST and `getReview` GET
+- Unit tests for state components:
+  - `LoadingState.test.tsx`: 5 tests — default/custom title, description, spinner
+  - `ErrorState.test.tsx`: 8 tests — message, title, retry button, link, custom labels, omitted props
+  - `EmptyState.test.tsx`: 7 tests — default/custom title, description, link, custom label, omitted link
