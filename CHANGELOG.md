@@ -102,3 +102,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Destructured `{ mutate, isPending, error }` from `useMutation`
   - No more manual state management for async submission
 - Home page (`/`): replaced inline SVG donut chart with reusable `ScoreDonut` component
+- State components (`src/components/states/`):
+  - `LoadingState` — centered spinner with terminal-style title and optional description
+  - `ErrorState` — error message with optional retry button and navigation link, configurable labels
+  - `EmptyState` — empty/no-data message with optional navigation link
+  - Barrel export (`index.ts`) for clean imports
+
+### Changed
+- Result page (`/result/[id]`): replaced inline `ResultSkeleton` and `ResultError` with reusable `LoadingState` and `ErrorState` components

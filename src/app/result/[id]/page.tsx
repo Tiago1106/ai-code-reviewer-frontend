@@ -1,9 +1,9 @@
 "use client";
 
 import { use } from "react";
-import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { Navbar, Badge, CodeBlock, ScoreDonut } from "@/components/ui";
+import { LoadingState, ErrorState } from "@/components/states";
 import { getReview, ApiError } from "@/lib";
 import type { ReviewResult } from "@/types";
 
@@ -174,69 +174,6 @@ function QuestionsSection({
 }
 
 /* ------------------------------------------------------------------ */
-/*  Loading skeleton                                                   */
-/* ------------------------------------------------------------------ */
-function ResultSkeleton() {
-  return (
-    <div className="animate-pulse flex flex-col gap-10">
-      {/* Header skeleton */}
-      <div className="flex items-start justify-between">
-        <div className="flex flex-col gap-3">
-          <div className="h-8 w-64 bg-bg-surface rounded" />
-          <div className="h-4 w-48 bg-bg-surface rounded" />
-        </div>
-        <div className="h-16 w-16 bg-bg-surface rounded-full" />
-      </div>
-      {/* Section skeletons */}
-      {[1, 2, 3].map((n) => (
-        <div key={n} className="flex flex-col gap-3">
-          <div className="h-4 w-32 bg-bg-surface rounded" />
-          <div className="h-24 w-full bg-bg-surface rounded-lg" />
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  Error state                                                        */
-/* ------------------------------------------------------------------ */
-function ResultError({
-  message,
-  onRetry,
-}: {
-  message: string;
-  onRetry: () => void;
-}) {
-  return (
-    <div className="flex flex-col items-center gap-6 py-20">
-      <div className="text-center flex flex-col gap-3">
-        <h2 className="text-xl font-bold text-text-primary">
-          <span className="text-text-secondary">$</span> erro
-        </h2>
-        <p className="text-sm font-body text-text-secondary max-w-md">
-          {message}
-        </p>
-      </div>
-      <div className="flex gap-3">
-        <button
-          onClick={onRetry}
-          className="px-4 py-2 text-sm font-bold bg-accent-primary text-text-primary rounded-md hover:opacity-90 transition-opacity cursor-pointer"
-        >
-          $ tentar_novamente
-        </button>
-        <Link
-          href="/review"
-          className="px-4 py-2 text-sm font-bold bg-bg-primary border border-border text-text-primary rounded-md hover:bg-bg-elevated transition-colors"
-        >
-          $ novo_review
-        </Link>
-      </div>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
 export default function ResultPage({
@@ -268,10 +205,19 @@ export default function ResultPage({
       <Navbar />
 
       <main className="max-w-[960px] mx-auto px-6 sm:px-20 py-12 flex flex-col gap-10">
-        {isLoading && <ResultSkeleton />}
+        {isLoading && (
+          <LoadingState
+            title="carregando_review..."
+            description="Buscando o resultado da análise."
+          />
+        )}
 
         {isError && (
-          <ResultError message={getErrorMessage()} onRetry={() => refetch()} />
+          <ErrorState
+            message={getErrorMessage()}
+            onRetry={() => refetch()}
+            linkHref="/review"
+          />
         )}
 
         {result && (
