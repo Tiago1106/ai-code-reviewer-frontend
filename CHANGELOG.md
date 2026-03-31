@@ -38,3 +38,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - `Navbar` — Logo `> code_reviewer` (> in purple), nav links with active state detection via `usePathname`, CTA button (`$ start_review` / `$ new_review` on result page), bottom border
   - Barrel export (`index.ts`) for clean imports
   - All components use `tailwind-merge` (`twMerge`) for safe class merging and conflict resolution
+- `CodeBlock` component (`src/components/ui/CodeBlock.tsx`):
+  - Syntax highlighting via `highlight.js` (core + individual language imports: typescript, python, go, java)
+  - Line numbers column with tertiary color (`#6B6B6B`)
+  - Diff mode (`diff={true}`): lines prefixed with `+` get green bg/text, `-` get red bg/text
+  - Truncation support: `maxLines` (default 500), `maxLength` (character limit)
+  - `maxHeight` prop for scroll containment
+  - Dark codeblock background (`#1E1B2E`), rounded border, horizontal scroll for long lines
+  - No CSS imported from highlight.js — uses custom token styles from `globals.css`
+- `CodeEditor` component (`src/components/ui/CodeEditor.tsx`):
+  - Interactive code editor powered by CodeMirror 6 (`@uiw/react-codemirror`)
+  - Custom dark theme matching design tokens (bg-codeblock, accent-primary caret, syntax colors)
+  - Language support: JavaScript, TypeScript, Python, Go, Java (via `@codemirror/lang-*`)
+  - Line numbers, bracket matching, auto-close brackets, indent on input
+  - Controlled component: `value` + `onChange` props
+  - `readOnly`, `disabled`, `placeholder`, `height` props
+- Preview page (`page.tsx`) showcasing all components: Navbar, Button, Badge, Select, CodeEditor, Textarea, CodeBlock, CodeBlock diff
