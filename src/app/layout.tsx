@@ -1,5 +1,19 @@
 import type { Metadata } from "next";
+import { JetBrains_Mono, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-jetbrains-mono",
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-ibm-plex-mono",
+});
 
 export const metadata: Metadata = {
   title: "AI Code Reviewer",
@@ -13,7 +27,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
+    <html
+      lang="pt-BR"
+      className={`${jetbrainsMono.variable} ${ibmPlexMono.variable}`}
+    >
       <body>{children}</body>
     </html>
   );

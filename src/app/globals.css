@@ -1,1 +1,108 @@
 @import "tailwindcss";
+
+/* ───────────────────────────────────────────────
+   Design Tokens — mapped to Tailwind v4 utilities
+   ─────────────────────────────────────────────── */
+
+@theme inline {
+  /* Fonts (via next/font CSS variables) */
+  --font-sans: var(--font-jetbrains-mono), monospace;
+  --font-mono: var(--font-jetbrains-mono), monospace;
+  --font-body: var(--font-ibm-plex-mono), monospace;
+}
+
+@theme {
+  /* Backgrounds */
+  --color-bg-primary: #2B2B2B;
+  --color-bg-surface: #333333;
+  --color-bg-elevated: #3D3D3D;
+  --color-bg-codeblock: #1E1B2E;
+
+  /* Borders */
+  --color-border: #4A4A4A;
+
+  /* Accent */
+  --color-accent-primary: #8B5CF6;
+
+  /* Text */
+  --color-text-primary: #FAFAFA;
+  --color-text-secondary: #9CA3AF;
+  --color-text-tertiary: #6B6B6B;
+
+  /* Diff */
+  --color-diff-add-bg: #10B98140;
+  --color-diff-add-text: #10B981;
+  --color-diff-remove-bg: #EF444440;
+  --color-diff-remove-text: #EF4444;
+
+  /* Severity */
+  --color-severity-low: #10B981;
+  --color-severity-medium: #F59E0B;
+  --color-severity-high: #EF4444;
+  --color-severity-critical: #DC2626;
+
+  /* Syntax Highlight */
+  --color-syntax-keyword: #C678DD;
+  --color-syntax-string: #98C379;
+  --color-syntax-type: #61AFEF;
+  --color-syntax-param: #D19A66;
+  --color-syntax-punctuation: #6B6B6B;
+}
+
+/* ───────────────────────────────────────────────
+   Base styles
+   ─────────────────────────────────────────────── */
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+}
+
+/* ───────────────────────────────────────────────
+   highlight.js token overrides (custom theme)
+   No CSS import from highlight.js — we style
+   the tokens manually to match our palette.
+   ─────────────────────────────────────────────── */
+
+.hljs {
+  background: transparent;
+  color: var(--color-text-primary);
+}
+
+.hljs-keyword,
+.hljs-built_in,
+.hljs-type,
+.hljs-literal,
+.hljs-selector-tag {
+  color: var(--color-syntax-keyword);
+}
+
+.hljs-string,
+.hljs-template-variable,
+.hljs-addition {
+  color: var(--color-syntax-string);
+}
+
+.hljs-title,
+.hljs-title\.function_,
+.hljs-title\.class_,
+.hljs-section {
+  color: var(--color-syntax-type);
+}
+
+.hljs-attr,
+.hljs-params,
+.hljs-variable,
+.hljs-number {
+  color: var(--color-syntax-param);
+}
+
+.hljs-punctuation,
+.hljs-comment {
+  color: var(--color-syntax-punctuation);
+}
+
+.hljs-deletion {
+  color: var(--color-diff-remove-text);
+}
