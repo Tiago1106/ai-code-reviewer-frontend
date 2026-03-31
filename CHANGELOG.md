@@ -60,3 +60,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Preview section (`// veja como funciona`): mock `review_result` card with SVG donut score chart (6/10), high/security badges, issue preview, `>>` recommendation, diff `CodeBlock`
   - Bottom CTA: `$ testar agora` button linking to `/review`
   - Smooth scroll anchor from `// learn_more` to `#como-funciona` section
+- API client (`src/lib/`):
+  - `api-error.ts`: `ApiError` class with status code and user-friendly messages
+  - `client.ts`: generic `request<T>()` fetch wrapper with 15s timeout, `AbortController`, network/HTTP error handling
+  - `reviews.ts`: `createReview(data)` — `POST /reviews`, `getReview(id)` — `GET /reviews/:id`
+  - `index.ts`: barrel export
+- Type contracts (`src/types/`):
+  - `language.ts`: `Language` type, `LANGUAGES` constant array
+  - `review-enums.ts`: `Severity` + `SEVERITIES`, `Category` + `CATEGORIES` (const arrays + derived union types)
+  - `review.ts`: `CreateReviewRequest`, `CreateReviewResponse`, `GetReviewResponse`, `ReviewResult`
+  - `index.ts`: barrel export for all types
+- Review page (`/review`) matching Pencil design:
+  - Header: `$ new_review` title + subtitle
+  - Language `Select`, `CodeEditor` (CodeMirror 6) for code input, `Textarea` for optional context
+  - Inline validation: language required, code cannot be empty
+  - Submit button `$ revisar_codigo` aligned right, disabled when invalid
+  - Loading state: `$ analisando...`, form fields with `opacity-40` and `pointer-events-none`
+  - Error display: styled error banner for API/network failures
+  - On success: navigates to `/result/{id}` via `useRouter`
