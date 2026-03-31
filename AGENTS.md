@@ -1,5 +1,45 @@
 # AI Code Reviewer (Frontend)
 
+## Workflow de Desenvolvimento
+
+### Regras gerais
+- Trabalhar **por feature** — um commit atômico por feature/fix/tarefa
+- **Commit somente quando o usuário pedir** — nunca commitar automaticamente
+- **Antes de cada commit**: atualizar o `CHANGELOG.md` com as mudanças da feature
+- **Push logo após o commit** — sempre dar push depois de commitar
+- **Nunca iniciar a próxima feature** sem o usuário pedir explicitamente
+
+### Convenção de commits
+| Prefixo | Quando usar |
+|---------|-------------|
+| `feat(scope)` | Nova funcionalidade (módulo, endpoint, componente) |
+| `fix(scope)` | Correção de bug |
+| `hotfix(scope)` | Correção urgente em produção |
+| `chore(scope)` | Config, scaffolding, dependências, CI |
+| `test(scope)` | Testes novos ou ajustes em testes existentes |
+| `docs(scope)` | Documentação |
+| `refactor(scope)` | Reestruturação sem mudar comportamento |
+| `style(scope)` | Formatação, lint (sem mudar lógica) |
+
+### Formato do CHANGELOG.md
+Seguir o padrão [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+Categorias disponíveis:
+- `Added` — funcionalidades novas
+- `Changed` — mudanças em funcionalidades existentes
+- `Deprecated` — funcionalidades que serão removidas
+- `Removed` — funcionalidades removidas
+- `Fixed` — correções de bugs
+- `Security` — correções de segurança
+
+### Checklist pré-commit
+1. Código da feature está pronto e testado
+2. `CHANGELOG.md` atualizado com as mudanças
+3. Aguardar aprovação do usuário para commitar
+4. Após commit, fazer push imediatamente
+
+---
+
 ## Objetivo
 Aplicação web que envia um trecho de código para a API e renderiza um review estruturado.
 
@@ -11,12 +51,15 @@ O MVP foca no fluxo de produto e na qualidade de UI:
 
 Depois do MVP: i18n, resultados reais via Ollama, autenticação + histórico, e review de PR do GitHub.
 
-## Tecnologias (alvo)
-- Next.js 15 (App Router) + TypeScript
-- Tailwind CSS v4
-- Componente `CodeBlock` customizado (sem dependência de editor externo)
-  - Syntax highlight via `highlight.js` (leve, sem overhead de editor completo)
-  - Estilo inspirado no ray.so (fundo escuro, line numbers, fonte monospace)
+## Tecnologias
+- Next.js 16 (App Router) + TypeScript
+- React 19
+- Tailwind CSS v4 (usa `@theme` em CSS, não `tailwind.config.js`)
+- React Query (`@tanstack/react-query`) para data fetching
+- CodeMirror 6 (`@uiw/react-codemirror`) para editor de código interativo
+- highlight.js para syntax highlight no `CodeBlock` (somente leitura)
+- `tailwind-merge` para class merging seguro
+- Vitest 4 + React Testing Library + jest-dom para testes
 
 ## Compatibilidade
 - Node.js: usar a versão instalada no ambiente (evitar APIs experimentais)
@@ -28,38 +71,112 @@ Depois do MVP: i18n, resultados reais via Ollama, autenticação + histórico, e
 - Fallback: `monospace`
 - Todas as fontes são monospace — estética de terminal/developer
 
-## Estrutura de pastas (planejada)
-- `app/` (App Router)
-- `app/page.tsx` (Home)
-- `app/review/page.tsx` (Revisão)
-- `app/result/[id]/page.tsx` (Resultado)
-- `components/`
-- `components/states/` (Loading, Empty, Error)
-- `lib/api.ts` (client para API)
-- `lib/types.ts` (contratos)
+## Estrutura de pastas
+```
+frontend/
+├── src/
+│   ├── app/
+│   │   ├── layout.tsx                     # RootLayout (fonts, metadata, QueryClientProvider)
+│   │   ├── globals.css                    # Tailwind v4 @theme tokens, highlight.js overrides, CodeMirror scrollbar
+│   │   ├── page.tsx                       # Home page (landing)
+│   │   ├── favicon.ico
+│   │   ├── review/
+│   │   │   └── page.tsx                   # Review form page (useMutation)
+│   │   └── result/
+│   │       └── [id]/
+│   │           └── page.tsx               # Result page (useQuery)
+│   ├── components/
+│   │   ├── ui/
+│   │   │   ├── Button.tsx                 # Primary/Secondary variants, terminal $ prefix
+│   │   │   ├── Select.tsx                 # Dark styled select, label + error
+│   │   │   ├── Textarea.tsx               # Dark textarea, label + error
+│   │   │   ├── Badge.tsx                  # Severity (semantic colors) + Category badges
+│   │   │   ├── Navbar.tsx                 # Logo, nav links, CTA, active state
+│   │   │   ├── CodeBlock.tsx              # Read-only code display (highlight.js, diff mode)
+│   │   │   ├── CodeEditor.tsx             # Interactive editor (CodeMirror 6, custom dark theme)
+│   │   │   ├── ScoreDonut.tsx             # Reusable SVG donut chart (score/max)
+│   │   │   └── index.ts                   # Barrel export
+│   │   └── states/
+│   │       ├── LoadingState.tsx           # Spinner + terminal title + description
+│   │       ├── ErrorState.tsx             # Error msg + retry button + link
+│   │       ├── EmptyState.tsx             # Empty msg + link
+│   │       └── index.ts                   # Barrel export
+│   ├── lib/
+│   │   ├── api-error.ts                   # ApiError class (status, message)
+│   │   ├── client.ts                      # Generic request<T>() fetch wrapper (15s timeout, AbortController)
+│   │   ├── reviews.ts                     # createReview(), getReview()
+│   │   ├── query-client.tsx               # Providers component (QueryClientProvider)
+│   │   └── index.ts                       # Barrel export
+│   ├── types/
+│   │   ├── language.ts                    # Language type, LANGUAGES constant
+│   │   ├── review-enums.ts               # Severity, Category (const arrays + union types)
+│   │   ├── review.ts                      # API request/response types, ReviewResult
+│   │   └── index.ts                       # Barrel export
+│   └── __tests__/
+│       ├── setup.ts                       # jest-dom/vitest matchers
+│       ├── lib/
+│       │   ├── client.test.ts             # 9 tests (request wrapper, ApiError)
+│       │   └── reviews.test.ts            # 2 tests (createReview, getReview)
+│       └── components/
+│           ├── LoadingState.test.tsx       # 5 tests
+│           ├── ErrorState.test.tsx         # 8 tests
+│           └── EmptyState.test.tsx         # 7 tests
+├── vitest.config.ts                       # Vitest config (jsdom, globals, @/ alias, react plugin)
+├── .env.example                           # NEXT_PUBLIC_API_BASE_URL documented
+├── package.json                           # Scripts: dev, build, start, lint, test, test:watch
+├── tsconfig.json                          # strict, bundler resolution, @/* alias
+├── eslint.config.mjs                      # eslint-config-next (core-web-vitals + typescript)
+├── postcss.config.mjs                     # @tailwindcss/postcss
+├── next.config.ts                         # Next.js config
+└── .gitignore
+```
 
 ## Componentes reutilizáveis (MVP)
 Objetivo:
 - Evitar duplicação e padronizar UI e estados.
+- Todos os componentes usam `tailwind-merge` (`twMerge`) para class merging seguro.
 
-Sugestão:
-- `components/ui/`:
-  - `Button`
-  - `Select`
-  - `Textarea`
-  - `Badge` (severity/category)
-  - `CodeBlock` (exibição de código com syntax highlight e suporte a diff)
-- `components/states/`:
-  - `LoadingState`
-  - `EmptyState`
-  - `ErrorState` (com ação de retry quando fizer sentido)
+`components/ui/`:
+- `Button` — Primary (accent-purple fill) / Secondary (bg-primary fill), terminal `$` prefix
+- `Select` — Dark styled select para language picker, bg-surface, label + inline error
+- `Textarea` — Dark textarea com bg-codeblock, monospace font, label + inline error
+- `Badge` — Severity badges (low/medium/high/critical com cores semânticas) + category badges (quality/security/performance)
+- `CodeBlock` — Exibição de código com syntax highlight (highlight.js) e modo diff
+- `CodeEditor` — Editor interativo (CodeMirror 6) com tema dark custom
+- `ScoreDonut` — SVG donut chart reutilizável (score/max, arc purple proporcional)
+- `Navbar` — Logo, nav links com active state, CTA button
+
+`components/states/`:
+- `LoadingState` — Spinner centrado + título terminal + descrição opcional
+- `EmptyState` — Mensagem de vazio + link opcional
+- `ErrorState` — Mensagem de erro + botão retry opcional + link opcional
 
 ## Como rodar (MVP)
 - Web: http://localhost:3000
+- Requer backend rodando em http://localhost:3001
+
+### Setup rápido
+```bash
+git clone git@github.com:Tiago1106/ai-code-reviewer-frontend.git
+cd ai-code-reviewer-frontend
+cp .env.example .env.local    # ajustar NEXT_PUBLIC_API_BASE_URL se necessário
+npm install
+npm run dev                   # http://localhost:3000
+```
+
+Verificar:
+- Home: `http://localhost:3000`
+- Review: `http://localhost:3000/review`
+- Testes: `npm run test` (run once) / `npm run test:watch` (watch mode)
 
 Comandos (npm):
 - `npm install`
 - `npm run dev`
+- `npm run build`
+- `npm run start`
+- `npm run lint`
+- `npm run test`
+- `npm run test:watch`
 
 ## Variáveis de ambiente (MVP)
 - `NEXT_PUBLIC_API_BASE_URL=http://localhost:3001`
@@ -72,13 +189,24 @@ Observação:
 - Manter um `.env.example` no repositório (sem segredos) para facilitar setup
 
 ## Networking (MVP)
-- O formulário de review e o CodeBlock exigem componente client (`"use client"`)
-- Requests para API via `fetch` com tratamento de erro e estado de loading
-- (Opcional) usar `AbortController` para cancelar request ao trocar de rota
+- O formulário de review e o CodeEditor exigem componente client (`"use client"`)
+- Requests para API via `fetch` wrapper genérico (`src/lib/client.ts`) com 15s timeout e `AbortController`
+- `ApiError` class (`src/lib/api-error.ts`) para erros HTTP e de rede com mensagens user-friendly
+- `createReview()` e `getReview()` em `src/lib/reviews.ts`
+- React Query (`@tanstack/react-query`) para gerenciamento de estado async:
+  - `useMutation` para `createReview` (Review page) — destructured `{ mutate, isPending, error }`
+  - `useQuery` para `getReview` (Result page) — destructured `{ data, isPending, error }`
+  - `QueryClientProvider` no root layout (`src/lib/query-client.tsx`)
+  - Singleton `QueryClient` pattern (SSR/browser), `staleTime: 60s`, no retry on mutations
 
-## Notas de arquitetura (Next)
-- Por padrão, páginas são Server Components; o formulário de review deve ficar em Client Component
-- A página `/result/[id]` pode ser Server Component (fetch no servidor) ou Client Component (fetch no browser)
+## Notas de arquitetura (Next.js 16)
+- Por padrão, páginas são Server Components; o formulário de review e result são Client Components (`"use client"`)
+- Next.js 16 dynamic route `params` é `Promise<{ id: string }>` — usar `const { id } = use(params)` com React `use()` hook
+- Home page (`/`) é Server Component
+- Review page (`/review`) é Client Component (form + useMutation)
+- Result page (`/result/[id]`) é Client Component (useQuery + interatividade)
+- Tailwind CSS v4 usa `@theme` directive em `globals.css`, não `tailwind.config.js`
+- Fontes via `next/font/google` com CSS variables mapeadas em `@theme inline`
 
 ## Feedback de navegação (MVP)
 - Ao clicar "Revisar":
@@ -284,14 +412,20 @@ Quando `diff` é `true`, o componente interpreta o `code` como unified diff:
 - Line numbers contam apenas linhas de contexto e do respectivo lado (old/new)
 
 ### Modo input (na página `/review`)
-Na tela de revisão, o usuário precisa digitar/colar código. Opções:
-- Usar um `<textarea>` estilizado com a mesma aparência do CodeBlock (fundo escuro, fonte mono)
-- O `CodeBlock` em si é somente leitura (exibição); a entrada de código fica no textarea
-- Syntax highlight no textarea é opcional no MVP (pode ser adicionado depois)
+Na tela de revisão, o usuário digita/cola código no `CodeEditor` (CodeMirror 6):
+- Editor interativo com syntax highlight em tempo real
+- Custom dark theme matching design tokens (bg-codeblock, accent-primary caret)
+- Language support: JavaScript, TypeScript, Python, Go, Java (via `@codemirror/lang-*`)
+- Line numbers, bracket matching, auto-close brackets, indent on input
+- Controlled component: `value` + `onChange` props
+- `readOnly`, `disabled`, `placeholder`, `height` props
+
+O `CodeBlock` é somente leitura (exibição); a entrada de código fica no `CodeEditor`.
 
 ### Uso no projeto
-- `/review`: textarea estilizado para input de código (estilo visual do CodeBlock)
-- `/result/[id]`: `CodeBlock` para exibir diffs das issues
+- `/review`: `CodeEditor` (CodeMirror 6) para input de código interativo
+- `/result/[id]`: `CodeBlock` para exibir diffs das issues (com `diff={true}`)
+- `/` (Home): `CodeBlock` para preview de código na landing page
 - Reutilizável em qualquer lugar que precise exibir código
 
 ## Estados de erro e loading
@@ -331,10 +465,11 @@ Validar antes de enviar o request para evitar roundtrips desnecessários:
 
 ### Header
 - Lado esquerdo: título `$ review_result`, metadata (linguagem, timestamp, status)
-- Lado direito: **Donut chart** (ring chart 100x100px)
-  - Track: ellipse com stroke 8px `#4A4A4A`
-  - Arc: path com stroke 8px `#8B5CF6`, preenchimento proporcional ao score (60% para 6/10)
-  - Centro: score value em `#8B5CF6` (fontSize 24, bold) + `/10` em `#9CA3AF` (fontSize 12)
+- Lado direito: `ScoreDonut` component (reusable SVG donut chart)
+  - Track: circle com stroke 8px `#4A4A4A`
+  - Arc: circle com stroke 8px `#8B5CF6`, `strokeDasharray` proporcional ao score
+  - Centro: `score/max` label em purple (todo em uma linha, fontSize bold)
+  - Props: `score`, `max` (default 10), `size` (default 100)
 
 ### Seções do resultado
 1. **Summary** (`// summary`) — card com borda, texto corrido
@@ -372,17 +507,28 @@ Exemplo visual (como o GitHub mostra em PRs):
 ## Testes (MVP)
 Estratégia mínima para garantir que o fluxo funciona:
 
-Unit tests:
-- `lib/api.ts`: testar chamadas de fetch (mock de fetch/responses)
-- Componentes de estado: renderizam corretamente com props válidas
+### Unit tests (31 testes, 5 arquivos)
+- `src/__tests__/lib/client.test.ts` (9 testes): GET/POST requests, HTTP errors (status codes), network failures (TypeError), timeout/abort (AbortError), unknown errors, ApiError class
+- `src/__tests__/lib/reviews.test.ts` (2 testes): createReview POST, getReview GET
+- `src/__tests__/components/LoadingState.test.tsx` (5 testes): default/custom title, description, spinner
+- `src/__tests__/components/ErrorState.test.tsx` (8 testes): message, title, retry button, link, custom labels
+- `src/__tests__/components/EmptyState.test.tsx` (7 testes): default/custom title, description, link, custom label
 
-Ferramentas:
-- Vitest (ou Jest) + React Testing Library
-- MSW (Mock Service Worker) para mockar a API nos testes
+### Ferramentas
+- **Vitest 4.x** — test runner com jsdom environment e globals habilitados
+- **React Testing Library** (`@testing-library/react`) — renderização de componentes
+- **jest-dom** (`@testing-library/jest-dom/vitest`) — matchers como `toBeInTheDocument()`
+- **@vitejs/plugin-react** — suporte a JSX no Vitest
+- Mocks: `vi.stubGlobal("fetch", ...)` para mockar fetch nos testes de API
+- Mocks: `vi.mock("next/link", ...)` para mockar Next.js Link nos testes de componentes
 
-Scripts:
-- `npm run test`
-- `npm run test:watch`
+### Configuração
+- `vitest.config.ts`: jsdom env, globals, `@/` alias via `path.resolve`, setup file, `clearMocks`/`restoreMocks`
+- `src/__tests__/setup.ts`: importa `@testing-library/jest-dom/vitest`
+
+### Scripts
+- `npm run test` — executa todos os testes uma vez
+- `npm run test:watch` — executa em modo watch
 
 Nota: testes e2e (Playwright/Cypress) ficam para pós-MVP.
 
@@ -422,11 +568,13 @@ MVP: usar uma língua (PT-BR) para reduzir escopo.
 - Login via GitHub OAuth
 - Páginas de perfil e histórico
 
-## Scripts (quando o projeto for criado)
-- `npm run dev`
-- `npm run build`
-- `npm run start`
-- `npm run lint`
+## Scripts
+- `npm run dev` — servidor de desenvolvimento (http://localhost:3000)
+- `npm run build` — build de produção
+- `npm run start` — serve o build de produção
+- `npm run lint` — ESLint
+- `npm run test` — Vitest (run once)
+- `npm run test:watch` — Vitest (watch mode)
 
 ### Nova feature: GitHub PR Review
 - Selecionar repo + PR e disparar review

@@ -122,3 +122,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - `LoadingState.test.tsx`: 5 tests — default/custom title, description, spinner
   - `ErrorState.test.tsx`: 8 tests — message, title, retry button, link, custom labels, omitted props
   - `EmptyState.test.tsx`: 7 tests — default/custom title, description, link, custom label, omitted link
+
+### Changed (docs)
+- `AGENTS.md` updated with final setup instructions:
+  - Added development workflow section (commit rules, conventions, changelog format, pre-commit checklist)
+  - Updated technology versions to actual installed: Next.js 16, React 19, Tailwind CSS v4, Vitest 4, CodeMirror 6
+  - Replaced "planned" folder structure with actual final tree (all files with descriptions)
+  - Added complete "Como rodar" with `git clone` setup, verify steps, and all npm scripts
+  - Updated components section to reflect all 8 UI components + 3 state components with descriptions
+  - Updated networking section with React Query details (`useMutation`/`useQuery`, `QueryClientProvider`)
+  - Updated architecture notes for Next.js 16 (`params` as `Promise`, `use()` hook)
+  - Updated CodeEditor section (CodeMirror 6 instead of textarea)
+  - Updated test section with actual tooling (Vitest 4.x, RTL, jest-dom) and 31 tests across 5 files
+  - Updated ScoreDonut reference in result page header
