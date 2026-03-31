@@ -54,3 +54,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Controlled component: `value` + `onChange` props
   - `readOnly`, `disabled`, `placeholder`, `height` props
 - Preview page (`page.tsx`) showcasing all components: Navbar, Button, Badge, Select, CodeEditor, Textarea, CodeBlock, CodeBlock diff
+- Home page (`/`) with landing page layout matching Pencil design:
+  - Hero section: purple tag badge (`// ai-powered code review`), terminal-style title, description, CTA buttons (`$ start_review` + `// learn_more`), `CodeBlock` preview on the right
+  - Feature cards section: 3 cards (`[>]`, `[+/-]`, `[5]`) with `gap-10` matching design spacing
+  - Preview section (`// veja como funciona`): mock `review_result` card with SVG donut score chart (6/10), high/security badges, issue preview, `>>` recommendation, diff `CodeBlock`
+  - Bottom CTA: `$ testar agora` button linking to `/review`
+  - Smooth scroll anchor from `// learn_more` to `#como-funciona` section

@@ -1,119 +1,223 @@
-"use client";
+import Link from "next/link";
+import { Navbar, Button, CodeBlock, Badge } from "@/components/ui";
 
-import { useState } from "react";
-import {
-  Button,
-  Select,
-  Textarea,
-  Badge,
-  Navbar,
-  CodeBlock,
-  CodeEditor,
-} from "@/components/ui";
+/* ── Sample code for hero preview ── */
+const heroCode = `import { Detail } from '@raycast/api';
 
-const sampleCode = `function calculateTotal(items: Item[]): number {
-  let total = 0;
-  for (const item of items) {
-    total += item.price * item.quantity;
-  }
-  return total;
+export default function Command() {
+  return <Detail markdown="Hello World" />;
 }`;
 
-const sampleDiff = `- file_get_contents(NEXMO_APPLICATION_PRIVATE_KEY_PATH),
-- NEXMO_APPLICATION_ID
-+ file_get_contents(VONAGE_APPLICATION_PRIVATE_KEY_PATH),
-+ VONAGE_APPLICATION_ID
-  // context line unchanged`;
+/* ── Sample diff for result preview ── */
+const previewDiff = `- const query = req.body.query;
++ const query = sanitize(req.body.query);`;
 
-const languages = [
-  { value: "javascript", label: "JavaScript" },
-  { value: "typescript", label: "TypeScript" },
-  { value: "python", label: "Python" },
-  { value: "go", label: "Go" },
-  { value: "java", label: "Java" },
-];
+/* ── Feature cards data ── */
+const features = [
+  {
+    icon: "[>]",
+    title: "review_estruturado",
+    description:
+      "Issues categorizadas por severidade, sugestões de melhoria e perguntas para reflexão.",
+  },
+  {
+    icon: "[+/-]",
+    title: "diffs_estilo_pr",
+    description:
+      "Veja como corrigir cada issue com diffs claros, no estilo de Pull Request do GitHub.",
+  },
+  {
+    icon: "[5]",
+    title: "multi_linguagem",
+    description:
+      "Suporte a JavaScript, TypeScript, Python, Go e Java. Mais linguagens em breve.",
+  },
+] as const;
 
-type Language = "javascript" | "typescript" | "python" | "go" | "java";
+/* ── Score for donut chart ── */
+const SCORE = 6;
+const SCORE_MAX = 10;
+const CIRCUMFERENCE = 2 * Math.PI * 28; // r=28
+const SCORE_ARC = (SCORE / SCORE_MAX) * CIRCUMFERENCE;
 
 export default function Home() {
-  const [code, setCode] = useState(sampleCode);
-  const [language, setLanguage] = useState<Language>("typescript");
-
   return (
     <>
       <Navbar />
 
-      <main className="max-w-4xl mx-auto px-10 py-12 flex flex-col gap-12">
-        <h1 className="text-2xl font-bold">{"// component_preview"}</h1>
+      <main>
+        {/* ══════════════════════════════════════════
+            Hero Section
+            ══════════════════════════════════════════ */}
+        <section className="px-20 py-20 flex items-center justify-between gap-16">
+          {/* Left content */}
+          <div className="flex flex-col gap-8 max-w-[700px]">
+            {/* Tag */}
+            <div className="inline-flex items-center gap-2 border border-border rounded-full px-4 py-1.5 w-fit">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent-primary" />
+              <span className="text-xs text-accent-primary font-medium">
+                {"// ai-powered code review"}
+              </span>
+            </div>
 
-        {/* Buttons */}
-        <section className="flex flex-col gap-4">
-          <h2 className="text-lg text-text-secondary">{"// buttons"}</h2>
-          <div className="flex items-center gap-4">
-            <Button>start_review</Button>
-            <Button variant="secondary">cancel</Button>
-            <Button disabled>analisando...</Button>
+            {/* Title */}
+            <h1 className="text-5xl font-bold leading-tight whitespace-pre">
+              {"$ review your code\n   with ai precision"}
+            </h1>
+
+            {/* Description */}
+            <p className="text-text-secondary font-body text-sm leading-relaxed max-w-[560px]">
+              Cole seu código, selecione a linguagem e receba um review
+              estruturado com issues, sugestões e diffs no estilo de PR.
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="flex items-center gap-4">
+              <Link href="/review">
+                <Button variant="primary">start_review</Button>
+              </Link>
+              <a
+                href="#como-funciona"
+                className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-medium rounded-md bg-bg-elevated text-text-primary hover:bg-bg-surface transition-colors"
+              >
+                <span className="text-text-secondary">{"//"}</span>
+                <span>learn_more</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Right code preview */}
+          <div className="w-[520px] flex-shrink-0">
+            <CodeBlock code={heroCode} language="typescript" />
           </div>
         </section>
 
-        {/* Badges */}
-        <section className="flex flex-col gap-4">
-          <h2 className="text-lg text-text-secondary">{"// badges"}</h2>
-          <div className="flex items-center gap-3 flex-wrap">
-            <Badge severity="low" />
-            <Badge severity="medium" />
-            <Badge severity="high" />
-            <Badge severity="critical" />
-            <Badge category="quality" />
-            <Badge category="security" />
-            <Badge category="performance" />
+        {/* ══════════════════════════════════════════
+            Feature Cards Section
+            ══════════════════════════════════════════ */}
+        <section className="px-20 py-16">
+          <div className="grid grid-cols-3 gap-10">
+            {features.map((feature) => (
+              <div
+                key={feature.title}
+                className="border border-border rounded-lg p-6 flex flex-col gap-4 hover:border-accent-primary/40 transition-colors"
+              >
+                {/* Icon */}
+                <span className="text-accent-primary text-lg font-bold">
+                  {feature.icon}
+                </span>
+
+                {/* Title */}
+                <h3 className="text-text-secondary text-sm">
+                  {feature.title}
+                </h3>
+
+                {/* Description */}
+                <p className="text-text-tertiary text-xs font-body leading-relaxed">
+                  {feature.description}
+                </p>
+              </div>
+            ))}
           </div>
         </section>
 
-        {/* Select */}
-        <section className="flex flex-col gap-4">
-          <h2 className="text-lg text-text-secondary">{"// select"}</h2>
-          <div className="max-w-xs">
-            <Select
-              label="linguagem"
-              options={languages}
-              value={language}
-              onChange={(e) => setLanguage(e.target.value as Language)}
-            />
+        {/* ══════════════════════════════════════════
+            Preview / CTA Section
+            ══════════════════════════════════════════ */}
+        <section
+          id="como-funciona"
+          className="px-20 py-16 flex flex-col items-center gap-10"
+        >
+          {/* Section header */}
+          <div className="text-center flex flex-col gap-3">
+            <h2 className="text-2xl font-bold text-text-secondary">
+              {"// veja como funciona"}
+            </h2>
+            <p className="text-text-tertiary text-sm font-body">
+              Um exemplo real de resultado de code review
+            </p>
           </div>
-        </section>
 
-        {/* CodeEditor — interactive */}
-        <section className="flex flex-col gap-4">
-          <h2 className="text-lg text-text-secondary">{"// code_editor"}</h2>
-          <CodeEditor
-            value={code}
-            onChange={setCode}
-            language={language}
-            height="250px"
-          />
-        </section>
+          {/* Result preview card */}
+          <div className="w-full max-w-[960px] bg-bg-surface rounded-lg border border-border overflow-hidden">
+            {/* Card header */}
+            <div className="flex items-start justify-between px-8 pt-8 pb-6">
+              <div className="flex flex-col gap-2">
+                <h3 className="text-lg font-bold">
+                  <span className="text-text-secondary">$</span>{" "}
+                  review_result
+                </h3>
+                <p className="text-text-tertiary text-xs">
+                  {"// linguagem: typescript | score: 6/10"}
+                </p>
+              </div>
 
-        {/* Textarea */}
-        <section className="flex flex-col gap-4">
-          <h2 className="text-lg text-text-secondary">{"// textarea"}</h2>
-          <Textarea
-            label="contexto (opcional)"
-            placeholder="descreva o contexto do codigo..."
-            rows={4}
-          />
-        </section>
+              {/* Score donut */}
+              <div className="relative w-16 h-16 flex-shrink-0">
+                <svg viewBox="0 0 64 64" className="w-full h-full -rotate-90">
+                  <circle
+                    cx="32"
+                    cy="32"
+                    r="28"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="6"
+                    className="text-border"
+                  />
+                  <circle
+                    cx="32"
+                    cy="32"
+                    r="28"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="6"
+                    strokeDasharray={`${SCORE_ARC} ${CIRCUMFERENCE}`}
+                    strokeLinecap="round"
+                    className="text-accent-primary"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-accent-primary font-bold text-sm">
+                    {SCORE}
+                  </span>
+                  <span className="text-text-tertiary text-xs">
+                    /{SCORE_MAX}
+                  </span>
+                </div>
+              </div>
+            </div>
 
-        {/* CodeBlock — read-only syntax highlight */}
-        <section className="flex flex-col gap-4">
-          <h2 className="text-lg text-text-secondary">{"// codeblock (read-only)"}</h2>
-          <CodeBlock code={sampleCode} language="typescript" />
-        </section>
+            {/* Issue preview */}
+            <div className="px-8 pb-8 flex flex-col gap-4">
+              {/* Badges */}
+              <div className="flex items-center gap-3">
+                <Badge severity="high" />
+                <Badge category="security" />
+              </div>
 
-        {/* CodeBlock — diff mode */}
-        <section className="flex flex-col gap-4">
-          <h2 className="text-lg text-text-secondary">{"// codeblock (diff)"}</h2>
-          <CodeBlock code={sampleDiff} diff />
+              {/* Issue title */}
+              <h4 className="text-sm font-bold">Input não sanitizado</h4>
+
+              {/* Issue description */}
+              <p className="text-text-secondary text-xs font-body leading-relaxed">
+                Dados de entrada devem ser validados antes de processamento.
+              </p>
+
+              {/* Recommendation */}
+              <p className="text-text-tertiary text-xs font-body">
+                <span className="text-accent-primary">{">>"}</span>{" "}
+                Valide e sanitize inputs usando uma biblioteca apropriada.
+              </p>
+
+              {/* Diff preview */}
+              <CodeBlock code={previewDiff} diff />
+            </div>
+          </div>
+
+          {/* CTA Button */}
+          <Link href="/review">
+            <Button variant="primary">testar agora</Button>
+          </Link>
         </section>
       </main>
     </>

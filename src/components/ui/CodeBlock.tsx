@@ -107,7 +107,7 @@ export function CodeBlock({
       className="bg-bg-codeblock rounded-lg border border-border overflow-hidden"
       style={maxHeight ? { maxHeight, overflow: "auto" } : undefined}
     >
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto py-4">
         <table className="w-full border-collapse">
           <tbody>
             {highlightedLines.map((line, i) => (
