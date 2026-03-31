@@ -78,3 +78,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Loading state: `$ analisando...`, form fields with `opacity-40` and `pointer-events-none`
   - Error display: styled error banner for API/network failures
   - On success: navigates to `/result/{id}` via `useRouter`
+- React Query (`@tanstack/react-query`):
+  - `QueryClientProvider` in root layout (`src/lib/query-client.tsx`)
+  - Singleton `QueryClient` pattern for SSR/browser (no re-creation on re-render)
+  - Default `staleTime: 60s` for queries, no retry on mutations
+- `ScoreDonut` component (`src/components/ui/ScoreDonut.tsx`):
+  - Reusable SVG donut chart with `score` and `max` props
+  - Purple arc proportional to score, `score/max` label centered in purple
+  - Used in Home page preview and Result page header
+- Result page (`/result/[id]`) matching Pencil design:
+  - `useQuery` to fetch `GET /reviews/:id` with automatic loading/error states
+  - Header: `$ review_result` title, metadata (language, status), `ScoreDonut` chart
+  - Summary section (`// summary`): card with bordered text
+  - Positives section (`// positives`): cards with `[+]` prefix in purple
+  - Issues section (`// issues [N]`): severity + category badges, title, explanation, `>>` recommendation in purple, `CodeBlock` with `diff={true}`
+  - Suggestions section (`// suggestions`): cards with `>>` prefix in purple
+  - Questions section (`// questions`): cards with `?` prefix in yellow (`#F59E0B`)
+  - Loading skeleton with pulse animation
+  - Error state with retry button and link to `/review`
+
+### Changed
+- Review page (`/review`): migrated from manual `useState` (`isSubmitting`, `error`) to React Query `useMutation` for `createReview`
+  - Destructured `{ mutate, isPending, error }` from `useMutation`
+  - No more manual state management for async submission
+- Home page (`/`): replaced inline SVG donut chart with reusable `ScoreDonut` component

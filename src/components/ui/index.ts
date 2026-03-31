@@ -5,3 +5,4 @@ export { Badge } from "./Badge";
 export { Navbar } from "./Navbar";
 export { CodeBlock } from "./CodeBlock";
 export { CodeEditor } from "./CodeEditor";
+export { ScoreDonut } from "./ScoreDonut";

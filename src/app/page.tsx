@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Navbar, Button, CodeBlock, Badge } from "@/components/ui";
+import { Navbar, Button, CodeBlock, Badge, ScoreDonut } from "@/components/ui";
 
 /* ── Sample code for hero preview ── */
 const heroCode = `import { Detail } from '@raycast/api';
@@ -36,9 +36,6 @@ const features = [
 
 /* ── Score for donut chart ── */
 const SCORE = 6;
-const SCORE_MAX = 10;
-const CIRCUMFERENCE = 2 * Math.PI * 28; // r=28
-const SCORE_ARC = (SCORE / SCORE_MAX) * CIRCUMFERENCE;
 
 export default function Home() {
   return (
@@ -153,38 +150,7 @@ export default function Home() {
               </div>
 
               {/* Score donut */}
-              <div className="relative w-16 h-16 flex-shrink-0">
-                <svg viewBox="0 0 64 64" className="w-full h-full -rotate-90">
-                  <circle
-                    cx="32"
-                    cy="32"
-                    r="28"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="6"
-                    className="text-border"
-                  />
-                  <circle
-                    cx="32"
-                    cy="32"
-                    r="28"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="6"
-                    strokeDasharray={`${SCORE_ARC} ${CIRCUMFERENCE}`}
-                    strokeLinecap="round"
-                    className="text-accent-primary"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-accent-primary font-bold text-sm">
-                    {SCORE}
-                  </span>
-                  <span className="text-text-tertiary text-xs">
-                    /{SCORE_MAX}
-                  </span>
-                </div>
-              </div>
+              <ScoreDonut score={SCORE} />
             </div>
 
             {/* Issue preview */}

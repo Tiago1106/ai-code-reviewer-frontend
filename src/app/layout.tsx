@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono, IBM_Plex_Mono } from "next/font/google";
+import { Providers } from "@/lib/query-client";
 import "./globals.css";
 
 const jetbrainsMono = JetBrains_Mono({
@@ -31,7 +32,9 @@ export default function RootLayout({
       lang="pt-BR"
       className={`${jetbrainsMono.variable} ${ibmPlexMono.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
