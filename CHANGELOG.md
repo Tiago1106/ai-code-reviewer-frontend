@@ -30,3 +30,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Mapped to Tailwind: `font-sans`/`font-mono` (JetBrains Mono), `font-body` (IBM Plex Mono)
 - highlight.js token CSS overrides (custom dark theme matching design palette)
 - Base body styles: dark background (`#2B2B2B`), light text (`#FAFAFA`), monospace font
+- Base UI components (`src/components/ui/`):
+  - `Button` — Primary (accent-purple fill) and Secondary (bg-primary fill) variants, terminal `$` prefix, disabled state, focus ring
+  - `Select` — Dark styled select for language picker, bg-surface, border, label + inline error support
+  - `Textarea` — Dark code input with bg-codeblock, monospace font, label + inline error support
+  - `Badge` — Severity badges (low/medium/high/critical with semantic colors) and category badges (quality/security/performance)
+  - `Navbar` — Logo `> code_reviewer` (> in purple), nav links with active state detection via `usePathname`, CTA button (`$ start_review` / `$ new_review` on result page), bottom border
+  - Barrel export (`index.ts`) for clean imports
+  - All components use `tailwind-merge` (`twMerge`) for safe class merging and conflict resolution
